@@ -95,4 +95,7 @@ http://ollama:11434
 
 Leave API Key empty (unless you are using a proxy like Open WebUI with auth)
 
+
 Save and test connection
+
+<img width="797" height="248" alt="image" src="https://github.com/user-attachments/assets/c7583b11-69b6-465c-bee3-a435bdad0063" />
