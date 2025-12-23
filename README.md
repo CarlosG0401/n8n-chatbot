@@ -25,7 +25,7 @@ Everything runs **locally using Docker**.
 
 ## 📁 Project structure
 
-` ```text `
+
 n8n-chatbot/
 ├── n8n-local/
 │   ├── docker-compose.yml
@@ -36,7 +36,6 @@ n8n-chatbot/
 ├── .gitignore
 └── README.md
 ---
-```md
 ⚠️ Important
 Do NOT commit ollama_data/ (models can be several GB).
 GitHub will reject large model files (and it’s not recommended to version them anyway).
