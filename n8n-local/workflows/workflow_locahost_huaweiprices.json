@@ -1,0 +1,305 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "d8d7e72b-b0eb-4d66-b2d4-4bae5b792edb",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -832,
+        224
+      ],
+      "id": "c450fb49-0a3b-42b4-bb15-4da3efab4303",
+      "name": "Webhook",
+      "webhookId": "d8d7e72b-b0eb-4d66-b2d4-4bae5b792edb"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        224
+      ],
+      "id": "40f299a3-ef35-4dee-8203-20270cbe8d17",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\n\nlet best = null;\n\nfor (const r of rows) {\n  const pm = Number(r.json.price_month);\n  if (!Number.isFinite(pm)) continue;\n\n  if (best === null || pm < best.price_month) {\n    best = { ...r.json, price_month: pm, price_hour: Number(r.json.price_hour) };\n  }\n}\n\nreturn [{ json: best ?? {} }];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fbec7c2c-133c-42a9-91f5-09beeff207be",
+      "name": "Cheaper Flavor"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.body.intent}}",
+                    "rightValue": "cheapest",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "5006cab1-7c07-44d1-8764-fb7b3ae95ff3"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a3b5731c-41b9-48da-8326-d8d8b0513dc8",
+                    "leftValue": "={{$json.body.intent}}",
+                    "rightValue": "most_expensive",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -624,
+        224
+      ],
+      "id": "694c38ea-b986-40f5-87b1-6580c06745ca",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\n\nlet best = null;\n\nfor (const r of rows) {\n  const pm = Number(r.json.price_month);\n  if (!Number.isFinite(pm)) continue;\n\n  if (best === null || pm > best.price_month) {\n    best = { ...r.json, price_month: pm, price_hour: Number(r.json.price_hour) };\n  }\n}\n\nreturn [{ json: best ?? {} }];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        272
+      ],
+      "id": "0c0a4451-4ecf-4a03-945e-e19e78fb3ff0",
+      "name": "Most Expensive"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -208,
+        32
+      ],
+      "id": "7d3a1192-0ae0-41b0-b94a-0289c8ff0269",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "deepseek-r1:7b",
+          "mode": "list",
+          "cachedResultName": "deepseek-r1:7b"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Usuario preguntó: {{$node[\"Webhook\"].json.body.message}}\n\nDevuelve SOLO el número price_month (sin texto):\n{{ $json.price_month }}\n\n"
+            },
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        320,
+        144
+      ],
+      "id": "b2c250a8-2422-4ebc-97b6-3f36c4b1b4d6",
+      "name": "Message a model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "bXvWNA5QsMymH7Te",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fileSelector": "/home/node/.n8n-files/precios_hwc_v1.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -400,
+        240
+      ],
+      "id": "4c9a8f84-48a0-4933-bdf1-8770222ddaf6",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/home/node/.n8n-files/precios_hwc_v1.csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -416,
+        48
+      ],
+      "id": "b467f9a8-7eec-47ce-95e9-c02a1cd63899",
+      "name": "Read/Write Files from Disk1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Most Expensive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cheaper Flavor": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Cheaper Flavor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Most Expensive": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "465b430e-c665-46eb-9d72-7e112a457b6c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d565aaf44a180bde3d648bceea8f4c859171064ff9fb9f2c6301d7568a7dbf69"
+  },
+  "id": "q1Td5nRCqpJrMbVk",
+  "tags": []
+}

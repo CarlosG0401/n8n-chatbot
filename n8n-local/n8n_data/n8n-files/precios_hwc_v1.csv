@@ -1,0 +1,10 @@
+﻿service,flavor,vcpu,ram,region,os,billing,price_hour,price_month
+ECS,s6.xlarge.2,4,8,la-south-2,linux,ppu,0.108,60.52
+ECS,s6.large.4,2,8,la-south-2,linux,ppu,0.06,35.3
+ECS,s6.xlarge.4,4,16,la-south-2,linux,ppu,0.12,66.83
+ECS,s6.2xlarge.2,8,16,la-south-2,linux,ppu,0.216,113.53
+ECS,s6.2xlarge.4,8,32,la-south-2,linux,ppu,0.24,126.14
+ECS,s6.small.1,1,1,la-south-2,linux,ppu,0.014,7.36
+ECS,s6.medium.2,1,2,la-south-2,linux,ppu,0.027,14.19
+ECS,s6.medium.4,1,4,la-south-2,linux,ppu,0.03,15.77
+ECS,s6.large.2,2,4,la-south-2,linux,ppu,0.054,28.38

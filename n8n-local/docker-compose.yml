@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  init_files:
+    image: busybox:latest
+    container_name: init_files
+    volumes:
+      - ./data:/data:ro
+      - n8n_files:/home/node/.n8n-files
+    command: sh -c "mkdir -p /home/node/.n8n-files && cp -f /data/precios_hwc_v1.csv /home/node/.n8n-files/ && ls -l /home/node/.n8n-files"
+    restart: "no"
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin_password
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - N8N_EDITOR_BASE_URL=http://localhost:5678/
+      - N8N_API_BASE_URL=http://localhost:5678/
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - n8n_files:/home/node/.n8n-files
+      - ./data:/data:ro
+    depends_on:
+      init_files:
+        condition: service_completed_successfully
+      ollama:
+        condition: service_started
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  n8n_data:
+  n8n_files:
+  ollama_data:
