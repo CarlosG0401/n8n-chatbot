@@ -25,7 +25,7 @@ Everything runs **locally using Docker**.
 
 ## 📁 Project structure
 
-```text
+
 n8n-chatbot/
 ├── n8n-local/
 │   ├── docker-compose.yml
