@@ -35,12 +35,12 @@ n8n-chatbot/
 │       └── workflow_localhost_huaweiprices.json
 ├── .gitignore
 └── README.md
-
+---
 ⚠️ Important
 Do NOT commit ollama_data/ (models can be several GB).
 GitHub will reject large model files (and it’s not recommended to version them anyway).
 
-🤖 Install Ollama model
+## 🤖 Install Ollama model
 
 After installing Ollama, download the model used by this project:
 
@@ -58,7 +58,7 @@ Go into the n8n-local folder:
 cd n8n-local
 docker-compose up -d
 
-
+---
 Services:
 
 n8n UI → http://localhost:5678
